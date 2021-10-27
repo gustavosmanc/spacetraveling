@@ -1,1 +1,66 @@
-// TODO
+.postBanner {
+  width: 100%;
+  height: 25rem;
+}
+
+.post {
+  max-width: 720px;
+  margin: 5rem auto 0;
+
+  h1 {
+    font-size: 3rem;
+    color: var(--heading);
+  }
+
+  h2 {
+    color: var(--heading);
+    font-weight: bold;
+    font-size: 2.25rem;
+  }
+}
+
+.postContentBody {
+  margin-top: 2rem;
+  line-height: 2rem;
+  font-size: 1.125rem;
+  color: var(--body);
+
+  p,
+  ul {
+    margin: 1.5rem 0;
+  }
+
+  ul {
+    padding-left: 1.5rem;
+
+    li {
+      margin: 0.5rem 0;
+    }
+  }
+
+  a {
+    color: var(--highlight);
+  }
+}
+
+.postInfo {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0 4rem 0;
+  font-size: 0.875rem;
+  color: var(--info);
+
+  & * {
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: 0.4375rem;
+      font-size: 1.125rem;
+    }
+  }
+
+  span {
+    margin-left: 1.5rem;
+  }
+}
