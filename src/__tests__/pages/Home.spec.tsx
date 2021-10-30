@@ -33,22 +33,22 @@ const mockedQueryReturn = {
   next_page: 'link',
   results: [
     {
-      uid: 'como-utilizar-hooks',
+      uid: 'how-to-use-hooks',
       first_publication_date: '2021-03-15T19:25:28+0000',
       data: {
-        title: 'Como utilizar Hooks',
-        subtitle: 'Pensando em sincronização em vez de ciclos de vida',
-        author: 'Joseph Oliveira',
+        title: 'How to use Hooks',
+        subtitle: 'Learn all about React Hooks with this hands-on guide',
+        author: 'Luke Skywalker',
       },
     },
     {
-      uid: 'criando-um-app-cra-do-zero',
+      uid: 'creating-a-cra-app-from-scratch',
       first_publication_date: '2021-03-25T19:27:35+0000',
       data: {
-        title: 'Criando um app CRA do zero',
+        title: 'Creating a CRA app from scratch',
         subtitle:
-          'Tudo sobre como criar a sua primeira aplicação utilizando Create React App',
-        author: 'Danilo Vieira',
+          'Everything about how to create your first application using Create React App',
+        author: 'John Smith',
       },
     },
   ],
@@ -91,13 +91,13 @@ describe('Home', () => {
             next_page: null,
             results: [
               {
-                uid: 'criando-um-app-cra-do-zero',
+                uid: 'creating-a-cra-app-from-scratch',
                 first_publication_date: '2021-03-25T19:27:35+0000',
                 data: {
-                  title: 'Criando um app CRA do zero',
+                  title: 'Creating a CRA app from scratch',
                   subtitle:
-                    'Tudo sobre como criar a sua primeira aplicação utilizando Create React App',
-                  author: 'Danilo Vieira',
+                    'Everything about how to create your first application using Create React App',
+                  author: 'John Smith',
                 },
               },
             ],
@@ -129,43 +129,43 @@ describe('Home', () => {
   it('should be able to render posts documents info', () => {
     const postsPagination = mockedQueryReturn;
 
-    render(<App postsPagination={postsPagination} />);
+    render(<App postsPagination={postsPagination} preview={false} />);
 
-    screen.getByText('Como utilizar Hooks');
-    screen.getByText('Pensando em sincronização em vez de ciclos de vida');
-    screen.getByText('15 mar 2021');
-    screen.getByText('Joseph Oliveira');
+    screen.getByText('How to use Hooks');
+    screen.getByText('Learn all about React Hooks with this hands-on guide');
+    screen.getByText('Mar 15, 2021');
+    screen.getByText('Luke Skywalker');
 
-    screen.getByText('Criando um app CRA do zero');
+    screen.getByText('Creating a CRA app from scratch');
     screen.getByText(
-      'Tudo sobre como criar a sua primeira aplicação utilizando Create React App'
+      'Everything about how to create your first application using Create React App'
     );
-    screen.getByText('15 mar 2021');
-    screen.getByText('Danilo Vieira');
+    screen.getByText('Mar 15, 2021');
+    screen.getByText('John Smith');
   });
 
   it('should be able to navigate to post page after a click', () => {
     const postsPagination = mockedQueryReturn;
 
-    render(<App postsPagination={postsPagination} />, {
+    render(<App postsPagination={postsPagination} preview={false} />, {
       wrapper: RouterWrapper,
     });
 
-    const firstPostTitle = screen.getByText('Como utilizar Hooks');
-    const secondPostTitle = screen.getByText('Criando um app CRA do zero');
+    const firstPostTitle = screen.getByText('How to use Hooks');
+    const secondPostTitle = screen.getByText('Creating a CRA app from scratch');
 
     fireEvent.click(firstPostTitle);
     fireEvent.click(secondPostTitle);
 
     expect(mockedPush).toHaveBeenNthCalledWith(
       1,
-      '/post/como-utilizar-hooks',
+      '/post/how-to-use-hooks',
       expect.anything(),
       expect.anything()
     );
     expect(mockedPush).toHaveBeenNthCalledWith(
       2,
-      '/post/criando-um-app-cra-do-zero',
+      '/post/creating-a-cra-app-from-scratch',
       expect.anything(),
       expect.anything()
     );
@@ -175,20 +175,20 @@ describe('Home', () => {
     const postsPagination = { ...mockedQueryReturn };
     postsPagination.results = [
       {
-        uid: 'como-utilizar-hooks',
+        uid: 'how-to-use-hooks',
         first_publication_date: '2021-03-15T19:25:28+0000',
         data: {
-          title: 'Como utilizar Hooks',
-          subtitle: 'Pensando em sincronização em vez de ciclos de vida',
-          author: 'Joseph Oliveira',
+          title: 'How to use Hooks',
+          subtitle: 'Learn all about React Hooks with this hands-on guide',
+          author: 'Luke Skywalker',
         },
       },
     ];
 
-    render(<App postsPagination={postsPagination} />);
+    render(<App postsPagination={postsPagination} preview={false} />);
 
-    screen.getByText('Como utilizar Hooks');
-    const loadMorePostsButton = screen.getByText('Carregar mais posts');
+    screen.getByText('How to use Hooks');
+    const loadMorePostsButton = screen.getByText('Load more posts');
 
     fireEvent.click(loadMorePostsButton);
 
@@ -199,18 +199,18 @@ describe('Home', () => {
       { timeout: 200 }
     );
 
-    screen.getByText('Criando um app CRA do zero');
+    screen.getByText('Creating a CRA app from scratch');
   });
 
   it('should not be able to load more posts if not available', async () => {
     const postsPagination = mockedQueryReturn;
     postsPagination.next_page = null;
 
-    render(<App postsPagination={postsPagination} />);
+    render(<App postsPagination={postsPagination} preview={false} />);
 
-    screen.getByText('Como utilizar Hooks');
-    screen.getByText('Criando um app CRA do zero');
-    const loadMorePostsButton = screen.queryByText('Carregar mais posts');
+    screen.getByText('How to use Hooks');
+    screen.getByText('Creating a CRA app from scratch');
+    const loadMorePostsButton = screen.queryByText('Load more posts');
 
     expect(loadMorePostsButton).not.toBeInTheDocument();
   });

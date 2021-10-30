@@ -6,7 +6,7 @@
     margin: 4rem 0 3rem 0;
   }
 
-  a {
+  .post {
     display: block;
 
     & + a {
@@ -60,4 +60,8 @@
     border: none;
     font-weight: 600;
   }
+}
+
+.exitPreview {
+  margin-top: 5rem;
 }

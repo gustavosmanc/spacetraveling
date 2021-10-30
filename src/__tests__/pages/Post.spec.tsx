@@ -10,8 +10,11 @@ import { useRouter } from 'next/router';
 import { getPrismicClient } from '../../services/prismic';
 import Post, { getStaticProps, getStaticPaths } from '../../pages/post/[slug]';
 
+type Link = { slug: string; title: string } | null;
+
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
   data: {
     title: string;
     banner: {
@@ -22,11 +25,14 @@ interface Post {
       heading: string;
       body: Record<string, unknown>[];
     }[];
+    previousPost: Link;
+    nextPost: Link;
   };
 }
 
 interface PostProps {
   post: Post;
+  preview: boolean;
 }
 
 interface GetStaticPropsResult {
@@ -36,21 +42,33 @@ interface GetStaticPropsResult {
 const mockedQueryReturn = {
   results: [
     {
-      uid: 'como-utilizar-hooks',
+      uid: 'how-to-use-hooks',
     },
     {
-      uid: 'criando-um-app-cra-do-zero',
+      uid: 'creating-a-cra-app-from-scratch',
+    },
+  ],
+};
+
+const mockedNextResponseReturn = {
+  results: [
+    {
+      uid: 'creating-a-cra-app-from-scratch',
+      data: {
+        title: 'Creating a CRA app from scratch',
+      },
     },
   ],
 };
 
 const mockedGetByUIDReturn = {
-  uid: 'como-utilizar-hooks',
+  uid: 'how-to-use-hooks',
   first_publication_date: '2021-03-25T19:25:28+0000',
+  last_publication_date: '2021-03-26T14:38:43+0000',
   data: {
-    title: 'Como utilizar Hooks',
-    subtitle: 'Pensando em sincronização em vez de ciclos de vida',
-    author: 'Joseph Oliveira',
+    title: 'How to use Hooks',
+    subtitle: 'Learn all about React Hooks with this hands-on guide',
+    author: 'Luke Skywalker',
     banner: {
       url: 'https://images.prismic.io/criando-projeto-do-zero/95494d57-eee2-4adb-9883-befa9829abca_christopher-gower-m_HRfLhgABo-unsplash.jpg?auto=compress,format',
     },
@@ -169,6 +187,11 @@ const mockedGetByUIDReturn = {
       },
     ],
   },
+  previousPost: null,
+  nextPost: {
+    slug: 'creating-a-cra-app-from-scratch',
+    title: 'Creating a CRA app from scratch',
+  },
 };
 
 jest.mock('@prismicio/client');
@@ -187,7 +210,15 @@ describe('Post', () => {
       getByUID: () => {
         return Promise.resolve(mockedGetByUIDReturn);
       },
-      query: () => {
+      query: (_, options) => {
+        if (options.pageSize === 1) {
+          if (options.orderings === '[document.first_publication_date]') {
+            return Promise.resolve({ results: [] });
+          }
+
+          return Promise.resolve(mockedNextResponseReturn);
+        }
+
         return Promise.resolve(mockedQueryReturn);
       },
     });
@@ -197,12 +228,12 @@ describe('Post', () => {
     const getStaticPathsReturn = [
       {
         params: {
-          slug: 'como-utilizar-hooks',
+          slug: 'how-to-use-hooks',
         },
       },
       {
         params: {
-          slug: 'criando-um-app-cra-do-zero',
+          slug: 'creating-a-cra-app-from-scratch',
         },
       },
     ];
@@ -217,7 +248,7 @@ describe('Post', () => {
   });
 
   it('should be able to return prismic post document using getStaticProps', async () => {
-    const routeParam = parse('como-utilizar-hooks');
+    const routeParam = parse('how-to-use-hooks');
 
     const postReturn = mockedGetByUIDReturn;
     const getStaticPropsContext: GetStaticPropsContext<ParsedUrlQuery> = {
@@ -234,12 +265,12 @@ describe('Post', () => {
   it('should be able to render post document info', () => {
     const postProps = mockedGetByUIDReturn;
 
-    render(<Post post={postProps} />);
+    render(<Post post={postProps} preview={false} />);
 
-    screen.getByText('Como utilizar Hooks');
-    screen.getByText('25 mar 2021');
-    screen.getByText('Joseph Oliveira');
-    screen.getByText('4 min');
+    screen.getByText('How to use Hooks');
+    screen.getByText('Mar 25, 2021');
+    screen.getByText('Luke Skywalker');
+    screen.getByText('4 min read');
 
     screen.getByText('Proin et varius');
     screen.getByText(/Nullam dolor sapien/);
@@ -247,15 +278,15 @@ describe('Post', () => {
     screen.getByText(/Ut varius quis velit sed cursus/);
   });
 
-  it('should be able to render loading message if fallback', () => {
+  it('should be able to render loading overlay component if fallback', () => {
     mockedUseRouter.mockReturnValueOnce({
       isFallback: true,
     });
 
     const postProps = mockedGetByUIDReturn;
 
-    render(<Post post={postProps} />);
+    render(<Post post={postProps} preview={false} />);
 
-    screen.getByText('Carregando...');
+    screen.getByTestId('loading-overlay');
   });
 });
