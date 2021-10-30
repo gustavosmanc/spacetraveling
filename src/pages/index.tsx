@@ -63,7 +63,7 @@ export default function Home({
   return (
     <>
       <Head>
-        <title>Home | spacetraveling</title>
+        <title>spacetraveling | Home</title>
       </Head>
 
       <main className={commonStyles.container}>

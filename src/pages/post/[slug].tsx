@@ -91,7 +91,7 @@ export default function Post({
   return (
     <>
       <Head>
-        <title>{data.title} | spacetraveling</title>
+        <title>spacetraveling | {data.title}</title>
       </Head>
 
       <Header />
